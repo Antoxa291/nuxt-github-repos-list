@@ -4,8 +4,8 @@ export default {
     commit('setErrorMessage', '');
 
     try {
-      const response = await this.$axios.get(`https://api.github.com/search/repositories?q=language:vue&sort=stars&page=${state.page}`);
       commit('incrementPage');
+      const response = await this.$axios.get(`https://api.github.com/search/repositories?q=language:vue&sort=stars&page=${state.page}`);
 
       if (response.data.items.length === 0) {
         commit('setAllDataFetched', true)

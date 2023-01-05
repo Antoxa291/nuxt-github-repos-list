@@ -22,17 +22,12 @@
       <div v-if="!allDataFetched" class="actions-wrapper">
         <div v-if="loading" class="actions-wrapper__loading loading-wrapper">
             <Spinner />
-          </div>
-        <button
-          v-else
-          class="actions-wrapper__btn btn--fetch observable"
-          @click="fetchData">
-          Load More
-        </button>
-        <div ref="observer" class="observer-trigger"></div>
+        </div>
+      </div>
+
+      <div ref="observer" class="observer-trigger"></div>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -45,6 +40,7 @@ export default {
   data() {
     return {
       observer: null,
+      debounceTimeout: null
   }},
   computed: {
     repos() {
@@ -68,14 +64,15 @@ export default {
   },
   methods: {
     fetchData() {
-        this.$store.dispatch('fetchData')
+      this.$store.dispatch('fetchData')
     },
     setupInfiniteScroll() {
       this.observer = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-          if (this.repos.length > 0) {
-            this.fetchData()
-          }
+        if (entries[0].isIntersecting && this.repos.length > 0) {
+          clearTimeout(this.debounceTimeout)
+          this.debounceTimeout = setTimeout(() => {
+              this.fetchData()
+          }, 500)
         }
       })
       this.observer.observe(this.$refs.observer)
@@ -135,6 +132,7 @@ export default {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    margin-bottom: 200px;
   }
 
   .actions-wrapper__btn {
@@ -156,10 +154,6 @@ export default {
     border-width: 5px;
     border-style: double;
     padding: 10px;
-  }
-
-  .observer-trigger {
-    height: 15px;
   }
 </style>
 <style>

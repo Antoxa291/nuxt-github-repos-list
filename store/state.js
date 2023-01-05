@@ -1,5 +1,5 @@
 export default () => ({
-  page: 1,
+  page: 0,
   allDataFetched: false,
   loading: false,
   repos: [],
